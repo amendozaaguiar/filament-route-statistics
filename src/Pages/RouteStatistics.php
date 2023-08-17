@@ -95,11 +95,7 @@ class RouteStatistics extends Page implements HasTable
                     ->sortable(),
                 TextColumn::make('counter')
                     ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.counter'))
-                    ->numeric(
-                        decimalPlaces: 0,
-                        decimalSeparator: '.',
-                        thousandsSeparator: ',',
-                    )
+                    ->numeric()
                     ->searchable()
                     ->sortable(),
             ])
