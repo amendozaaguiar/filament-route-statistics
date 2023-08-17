@@ -9,8 +9,8 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'navigation.group' => 'Estadísticas',
-    'navigation.label' => 'Rutas',
+    'navigation.group' => 'Statistics',
+    'navigation.label' => 'Routes',
 
     /*
     |--------------------------------------------------------------------------
@@ -18,7 +18,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'table.heading' => 'Estadísticas de rutas',
+    'table.heading' => 'Route Statistics',
 
     /*
     |--------------------------------------------------------------------------
@@ -26,8 +26,8 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'table.refresh' => 'Refrescar',
-    'table.refresh.notification' => 'Estadísticas de rutas actualizadas',
+    'table.refresh' => 'Refresh',
+    'table.refresh.notification' => 'Route statistics refreshed',
 
     /*
     |--------------------------------------------------------------------------
@@ -36,13 +36,15 @@ return [
     */
 
     'table.columns.id' => 'ID',
-    'table.columns.user.name' => 'Usuario',
-    'table.columns.method' => 'Método',
-    'table.columns.route' => 'Ruta',
-    'table.columns.status' => 'Estado',
+    'table.columns.user.name' => 'User',
+    'table.columns.method' => 'Method',
+    'table.columns.route' => 'Route',
+    'table.columns.status' => 'Status',
     'table.columns.ip' => 'IP',
-    'table.columns.date' => 'Fecha',
-    'table.columns.counter' => 'Contador',
+    'table.columns.date' => 'Date',
+    'table.columns.counter' => 'Counter',
+
+
 
 
 ];
