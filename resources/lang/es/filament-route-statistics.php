@@ -10,7 +10,8 @@ return [
     */
 
     'navigation.group' => 'Estadísticas',
-    'navigation.label' => 'Rutas',
+    'navigation.label' => 'Estadística de rutas',
+    'navigation.pluralLabel' => 'Estadísticas de rutas',
 
     /*
     |--------------------------------------------------------------------------

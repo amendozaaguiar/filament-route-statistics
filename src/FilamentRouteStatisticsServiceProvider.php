@@ -7,12 +7,13 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class FilamentRouteStatisticsServiceProvider extends PackageServiceProvider
 {
+    public static string $name = 'filament-route-statistics';
+
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('filament-route-statistics')
+            ->name(static::$name)
             ->hasConfigFile()
-            ->hasTranslations()
-            ->hasViews();
+            ->hasTranslations();
     }
 }

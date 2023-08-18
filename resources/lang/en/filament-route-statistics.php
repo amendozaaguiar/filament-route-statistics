@@ -10,7 +10,9 @@ return [
     */
 
     'navigation.group' => 'Statistics',
-    'navigation.label' => 'Routes',
+    'navigation.label' => 'Route Statistics',
+    'navigation.pluralLabel' => 'Route Statistics',
+
 
     /*
     |--------------------------------------------------------------------------
