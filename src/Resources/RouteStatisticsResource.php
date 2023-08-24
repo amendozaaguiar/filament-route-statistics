@@ -17,7 +17,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-
+use Illuminate\Foundation\Auth\User;
 
 class RouteStatisticsResource extends Resource
 {
@@ -106,6 +106,12 @@ class RouteStatisticsResource extends Resource
                     ->sortable(),
             ])
             ->filters([
+                SelectFilter::make('user_id')
+                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.method'))
+                    ->multiple()
+                    ->options(fn () => User::select('id', 'name')->pluck('name', 'id')->toArray())
+                    ->attribute('user_id'),
+
                 SelectFilter::make('method')
                     ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.method'))
                     ->multiple()
@@ -122,7 +128,7 @@ class RouteStatisticsResource extends Resource
                     ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.route'))
                     ->multiple()
                     ->options(fn () => RouteStatistic::select('route')->distinct()->pluck('route', 'route')->toArray())
-                    ->attribute('status'),
+                    ->attribute('route'),
 
                 Filter::make('date')
                     ->form([
