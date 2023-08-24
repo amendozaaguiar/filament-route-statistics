@@ -8,12 +8,15 @@ use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pag
 use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pages\ListRouteStatistics;
 use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Widgets\RouteStatisticsOverview;
 use Bilfeldt\LaravelRouteStatistics\Models\RouteStatistic;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Support\Htmlable;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 
 class RouteStatisticsResource extends Resource
@@ -66,7 +69,7 @@ class RouteStatisticsResource extends Resource
                         'PUT' => 'info',
                         'PATCH' => 'gray',
                         'DELETE' => 'danger',
-                        default => 'success'
+                        default => 'gray'
                     })
                     ->searchable()
                     ->sortable(),
@@ -103,7 +106,40 @@ class RouteStatisticsResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('method')
+                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.method'))
+                    ->multiple()
+                    ->options(fn () => RouteStatistic::select('method')->distinct()->pluck('method', 'method')->toArray())
+                    ->attribute('method'),
+
+                SelectFilter::make('status')
+                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.status'))
+                    ->multiple()
+                    ->options(fn () => RouteStatistic::select('status')->distinct()->pluck('status', 'status')->toArray())
+                    ->attribute('status'),
+
+                SelectFilter::make('status')
+                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.route'))
+                    ->multiple()
+                    ->options(fn () => RouteStatistic::select('route')->distinct()->pluck('route', 'route')->toArray())
+                    ->attribute('status'),
+
+                Filter::make('date')
+                    ->form([
+                        DatePicker::make('created_from')->label('Desde'),
+                        DatePicker::make('created_until')->label('Hasta'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
+                            );
+                    })
             ])
             ->actions([
                 // Tables\Actions\EditAction::make(),
@@ -133,14 +169,6 @@ class RouteStatisticsResource extends Resource
             //'edit' => EditRouteStatistics::route('/{record}/edit'),
         ];
     }
-
-    public static function getWidgets(): array
-    {
-        return [
-            RouteStatisticsOverview::class,
-        ];
-    }
-
 
     public static function canCreate(): bool
     {
