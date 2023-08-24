@@ -107,7 +107,7 @@ class RouteStatisticsResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('user_id')
-                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.method'))
+                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.user'))
                     ->multiple()
                     ->options(fn () => User::select('id', 'name')->pluck('name', 'id')->toArray())
                     ->attribute('user_id'),

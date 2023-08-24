@@ -37,6 +37,7 @@ return [
     */
 
     'table.columns.id' => 'ID',
+    'table.columns.user' => 'Usuario',
     'table.columns.user.name' => 'Usuario',
     'table.columns.method' => 'Método',
     'table.columns.route' => 'Ruta',

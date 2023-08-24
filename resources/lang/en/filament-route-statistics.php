@@ -38,6 +38,7 @@ return [
     */
 
     'table.columns.id' => 'ID',
+    'table.columns.user' => 'User',
     'table.columns.user.name' => 'User',
     'table.columns.method' => 'Method',
     'table.columns.route' => 'Route',
