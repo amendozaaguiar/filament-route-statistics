@@ -5,7 +5,7 @@
 
 ![Filament Authentication Log Resource](https://raw.githubusercontent.com/amendozaaguiar/filament-route-statistics/main/art/art.png)
 
-![Filament Authentication Log Resource with filters and tooltip](https://raw.githubusercontent.com/amendozaaguiar/filament-route-statistics/main/art/art-banner.png)
+![Filament Authentication Log Resource with filters and tooltip](https://raw.githubusercontent.com/amendozaaguiar/filament-route-statistics/main/art/art-filter.png)
 
 A Filament plugin for [Laravel Route Statistics](https://github.com/bilfeldt/laravel-route-statistics) package.
 
