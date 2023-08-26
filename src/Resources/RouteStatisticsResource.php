@@ -2,7 +2,6 @@
 
 namespace Amendozaaguiar\FilamentRouteStatistics\Resources;
 
-
 use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pages\CreateRouteStatistics;
 use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pages\EditRouteStatistics;
 use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pages\ListRouteStatistics;
@@ -18,6 +17,10 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User;
+
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class RouteStatisticsResource extends Resource
 {
@@ -156,10 +159,17 @@ class RouteStatisticsResource extends Resource
             ->actions([
                 // Tables\Actions\EditAction::make(),
             ])
+            ->headerActions([
+                ExportAction::make()->exports([
+                    ExcelExport::make()
+                        ->fromTable()
+                ])
+            ])
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([
                 //     Tables\Actions\DeleteBulkAction::make(),
                 // ]),
+                ExportBulkAction::make()
             ])
             ->emptyStateActions([
                 // Tables\Actions\CreateAction::make(),
