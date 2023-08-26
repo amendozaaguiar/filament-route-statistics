@@ -25,6 +25,12 @@ class RouteStatisticsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar-square';
 
+    public static function getBreadcrumb(): string
+    {
+        return '';
+    }
+
+
     public static function getLabel(): string
     {
         return __('filament-route-statistics::filament-route-statistics.navigation.label');
@@ -173,6 +179,13 @@ class RouteStatisticsResource extends Resource
             'index' => ListRouteStatistics::route('/'),
             //'create' => CreateRouteStatistics::route('/create'),
             //'edit' => EditRouteStatistics::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            RouteStatisticsOverview::class,
         ];
     }
 

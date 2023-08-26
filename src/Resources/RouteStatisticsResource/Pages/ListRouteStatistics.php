@@ -11,6 +11,11 @@ class ListRouteStatistics extends ListRecords
 {
     protected static string $resource = RouteStatisticsResource::class;
 
+    public function getBreadcrumb(): ?string
+    {
+        return '';
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -21,7 +26,7 @@ class ListRouteStatistics extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            //RouteStatisticsOverview::class,
+            RouteStatisticsOverview::class,
         ];
     }
 }

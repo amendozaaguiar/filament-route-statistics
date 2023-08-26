@@ -46,5 +46,19 @@ return [
     'table.columns.date' => 'Fecha',
     'table.columns.counter' => 'Contador',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Widgets
+    |--------------------------------------------------------------------------
+    */
+
+    'widgets.overview.label' => 'Estadísticas de rutas',
+    'widgets.overview.description' => 'Estadísticas de rutas',
+    'widgets.overview.statistic.all' => 'Todos',
+    'widgets.overview.statistic.description.all' => 'Solicitudes para todos los métodos en la última semana',
+    'widgets.overview.statistic.increase' => 'Incremento',
+    'widgets.overview.statistic.decrease' => 'Disminución',
+    'widgets.overview.statistic.no-change' => 'Sin cambios',
+
 
 ];

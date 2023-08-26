@@ -48,6 +48,19 @@ return [
     'table.columns.counter' => 'Counter',
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Widgets
+    |--------------------------------------------------------------------------
+    */
+
+    'widgets.overview.label' => 'Route Statistics',
+    'widgets.overview.description' => 'Route Statistics',
+    'widgets.overview.statistic.all' => 'All',
+    'widgets.overview.statistic.description.all' => 'Requests for all methods in the last week',
+    'widgets.overview.statistic.increase' => 'Increase',
+    'widgets.overview.statistic.decrease' => 'Decrease',
+    'widgets.overview.statistic.no-change' => 'No change',
 
 
 

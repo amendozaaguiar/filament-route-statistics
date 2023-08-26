@@ -11,60 +11,123 @@ class RouteStatisticsOverview extends BaseWidget
 {
     public $stats;
 
-    public function mount()
-    {
-        $methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
-
-        $changes = $this->calculateChangeForMethods($methods);
-
-        $stats = [];
-
-        foreach ($methods as $method) {
-            $total = $this->getCountRequestGroupByMethod($method);
-            $stats[] = Stat::make($method, $this->formatNumber($total))
-                ->description($this->getDescription($changes[$method]))
-                ->descriptionIcon($changes[$method]['icon'])
-                ->color($this->getColor($changes[$method]));
-        }
-
-        $this->stats =  $stats;
-    }
+    public $methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'ALL'];
 
     protected function getStats(): array
     {
-        return $this->stats;
+        return $this->getInformationStats();
     }
 
-    private function calculateChangeInfo($yesterdayTotal, $todayTotal)
+    private function getInformationStats()
     {
-        if ($yesterdayTotal === 0) {
-            $changePercentage = $todayTotal === 0 ? 0 : 100;
-            $changeType = 'increment';
-        } else {
-            $changePercentage = (($todayTotal - $yesterdayTotal) / $yesterdayTotal) * 100;
-            $changeType = $todayTotal > $yesterdayTotal ? 'increment' : ($todayTotal < $yesterdayTotal ? 'decrement' : 'no change');
+        $allRequest = 0;
+        $stats = ['ALL' => null];
+        $charts = [];
+
+        foreach ($this->methods as $method) {
+
+            if ($method === 'ALL') {
+                continue;
+            }
+
+            $countRequests = $this->getCountRequestGroupByMethod($method);
+            $todayRequests = $this->getDiffCountRequestGroupByMethod($method, Carbon::now()->subWeek(), Carbon::today());
+            $yesterdayRequests = $this->getDiffCountRequestGroupByMethod($method,  Carbon::now()->subWeek()->subWeek(), Carbon::now()->subWeek());
+            $diffRequests = $this->calculateDiff($todayRequests, $yesterdayRequests);
+            $description = $this->getDescriptionStat($diffRequests);
+            $icon = $this->getIcon($diffRequests);
+            $chart = $this->getCountRequestGroupByMethodAndDay($method);
+            $color = $this->getColor($diffRequests);
+
+            $stats[$method] = Stat::make($method, $this->formatNumber($countRequests))
+                ->description($description)
+                ->descriptionIcon($icon)
+                ->chart($chart)
+                ->color($color);
+
+            $allRequest += $countRequests;
+            $allChart[] = $chart;
         }
 
-        $icon = 'heroicon-m-arrow-trending-up';
+        //une todos los charts por dia
+        $charts = array_merge(...$allChart);
 
-        if ($changeType === 'decrement') {
-            $icon = 'heroicon-m-arrow-trending-down';
-        }
+        $stats['ALL'] = Stat::make(trans('filament-route-statistics::filament-route-statistics.widgets.overview.statistic.all'), $this->formatNumber($allRequest))
+            ->description(trans('filament-route-statistics::filament-route-statistics.widgets.overview.statistic.description.all'))
+            ->chart($charts)
+            ->color('info');
 
-        return [
-            'changePercentage' => $changePercentage,
-            'changeType' => $changeType,
-            'icon' => $icon,
-        ];
+        return $stats;
     }
 
-    private function getCountRequestGroupByMethod($method)
+    private function getCountRequestGroupByMethod($method): int
     {
         return RouteStatistic::where('method', $method)->sum('counter');
     }
 
-    private function formatNumber($number)
+    private function getDiffCountRequestGroupByMethod($method, $startOfWeek, $endOfWeek): int
     {
+        return RouteStatistic::where('method', $method)
+            ->whereBetween('date', [$startOfWeek, $endOfWeek])
+            ->sum('counter');
+    }
+
+    private function getCountRequestGroupByMethodAndDay($method): array
+    {
+        return RouteStatistic::selectRaw('date(date) as day, sum(counter) as total')
+            ->where('method', $method)
+            ->groupBy('day')
+            ->orderBy('day', 'desc')
+            ->limit(7)
+            ->pluck('total', 'day')
+            ->toArray();
+    }
+
+    private function calculateDiff($todayRequest, $yesterdayRequest)
+    {
+        return $todayRequest - $yesterdayRequest;
+    }
+
+    private function getDescriptionStat($diff)
+    {
+        $diffFormat = $this->formatNumber($diff);
+
+        if ($diff > 0) {
+            return $diffFormat . " " . trans('filament-route-statistics::filament-route-statistics.widgets.overview.statistic.increase');
+        } elseif ($diff < 0) {
+            return $diffFormat . " " . trans('filament-route-statistics::filament-route-statistics.widgets.overview.statistic.decrease');
+        } else {
+            return trans('filament-route-statistics::filament-route-statistics.widgets.overview.statistic.no-change');
+        }
+    }
+
+    private function getIcon($diff): string
+    {
+        if ($diff > 0) {
+            return 'heroicon-m-arrow-trending-up';
+        } elseif ($diff < 0) {
+            return 'heroicon-m-arrow-trending-down';
+        } else {
+            return 'heroicon-m-arrow-right';
+        }
+    }
+
+    private function getColor($diff): string
+    {
+        if ($diff > 0) {
+            return 'success';
+        } elseif ($diff < 0) {
+            return 'danger';
+        } else {
+            return 'info';
+        }
+    }
+
+    private function formatNumber($number): string
+    {
+        $isNegative = $number < 0;
+        $number = abs($number);
+
         $formats = [
             1000000000000 => 'T',
             1000000000 => 'B',
@@ -74,51 +137,11 @@ class RouteStatisticsOverview extends BaseWidget
 
         foreach ($formats as $limit => $suffix) {
             if ($number >= $limit) {
-                return number_format($number / $limit, 1) . $suffix;
+                $formattedNumber = number_format($number / $limit, 1) . $suffix;
+                return $isNegative ? '-' . $formattedNumber : $formattedNumber;
             }
         }
 
-        return $number;
-    }
-
-    private function calculateChangeForMethods(array $methods)
-    {
-        $changes = [];
-
-        foreach ($methods as $method) {
-            $yesterdayTotal = $this->getCountRequestGroupByMethod($method, Carbon::yesterday());
-            $todayTotal = $this->getCountRequestGroupByMethod($method, Carbon::today());
-
-            $changes[$method] = $this->calculateChangeInfo($yesterdayTotal, $todayTotal);
-        }
-
-        return $changes;
-    }
-
-    private function getDescription($changeInfo)
-    {
-        $changeType = $changeInfo['changeType'];
-        $changePercentage = $changeInfo['changePercentage'];
-
-        if ($changeType === 'increment') {
-            return "{$changePercentage}% increase";
-        } elseif ($changeType === 'decrement') {
-            return "{$changePercentage}% decrease";
-        } else {
-            return 'No change';
-        }
-    }
-
-    private function getColor($changeInfo)
-    {
-        $changeType = $changeInfo['changeType'];
-
-        if ($changeType === 'increment') {
-            return 'success';
-        } elseif ($changeType === 'decrement') {
-            return 'danger';
-        } else {
-            return 'info';
-        }
+        return $isNegative ? '-' . $number : $number;
     }
 }
