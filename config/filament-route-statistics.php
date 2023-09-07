@@ -6,4 +6,7 @@ return [
         'column' => 'id',
         'direction' => 'desc',
     ],
+    'username' => [
+        'column' => 'email'
+    ]
 ];

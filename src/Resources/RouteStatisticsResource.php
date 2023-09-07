@@ -65,7 +65,7 @@ class RouteStatisticsResource extends Resource
                     ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.id'))
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('user.name')
+                TextColumn::make('user.' . config('filament-route-statistics.username.column'))
                     ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.user.name'))
                     ->searchable()
                     ->sortable(),
@@ -118,7 +118,7 @@ class RouteStatisticsResource extends Resource
                 SelectFilter::make('user_id')
                     ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.user'))
                     ->multiple()
-                    ->options(fn () => User::select('id', 'name')->pluck('name', 'id')->toArray())
+                    ->options(fn () => User::select('id', config('filament-route-statistics.username.column'))->pluck(config('filament-route-statistics.username.column'), 'id')->toArray())
                     ->attribute('user_id'),
 
                 SelectFilter::make('method')
