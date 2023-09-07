@@ -173,7 +173,8 @@ class RouteStatisticsResource extends Resource
             ])
             ->emptyStateActions([
                 // Tables\Actions\CreateAction::make(),
-            ]);
+            ])
+            ->defaultSort(config('filament-route-statistics.sort.column'), config('filament-route-statistics.sort.direction'));
     }
 
     public static function getRelations(): array
