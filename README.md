@@ -13,12 +13,13 @@ This package provides a Filament resource for [Laravel Route Statistics](https:/
 
 ## Requirements
 
--   PHP 8.1
+-   PHP 8.1 | 8.2
 -   [Filament 3](https://github.com/laravel-filament/filament)
 
 ## Dependencies
 
 -   [bilfeldt/laravel-route-statistics](https://github.com/bilfeldt/laravel-route-statistics)
+-   [pxlrbt/filament-excel](https://github.com/pxlrbt/filament-excel)
 
 ## Installation
 
