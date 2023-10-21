@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Stringable;
+use App\Models\Team;
 
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
@@ -87,10 +88,18 @@ class RouteStatisticsResource extends Resource
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.id'))
                     ->searchable()
                     ->sortable(),
+
                 TextColumn::make('user.' . config('filament-route-statistics.username.column'))
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.user.name'))
                     ->searchable()
                     ->sortable(),
+
+                TextColumn::make(class_exists('App\Models\Team') ? 'team.' . config('filament-route-statistics.team.column') : 'team_id')
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.team'))
+                    ->visible(class_exists('App\Models\Team') ? true : false)
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('method')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.method'))
                     ->badge()
@@ -104,10 +113,12 @@ class RouteStatisticsResource extends Resource
                     })
                     ->searchable()
                     ->sortable(),
+
                 TextColumn::make('route')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.route'))
                     ->searchable()
                     ->sortable(),
+
                 TextColumn::make('status')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.status'))
                     ->badge()
@@ -121,15 +132,18 @@ class RouteStatisticsResource extends Resource
                     })
                     ->searchable()
                     ->sortable(),
+
                 TextColumn::make('ip')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.ip'))
                     ->searchable()
                     ->sortable(),
+
                 TextColumn::make('date')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.date'))
                     ->dateTime()
                     ->searchable()
                     ->sortable(),
+
                 TextColumn::make('counter')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.counter'))
                     ->numeric()
@@ -142,6 +156,19 @@ class RouteStatisticsResource extends Resource
                     ->multiple()
                     ->options(fn () => User::select('id', config('filament-route-statistics.username.column'))->pluck(config('filament-route-statistics.username.column'), 'id')->toArray())
                     ->attribute('user_id'),
+
+                SelectFilter::make('team_id')
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.team'))
+                    ->multiple()
+                    ->options(function () {
+                        if (class_exists('App\Models\Team')) {
+                            return Team::select('id', config('filament-route-statistics.team.column'))->pluck(config('filament-route-statistics.team.column'), 'id')->toArray();
+                        }
+
+                        return [];
+                    })
+                    ->visible(class_exists('App\Models\Team') ? true : false)
+                    ->attribute('team_id'),
 
                 SelectFilter::make('method')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.method'))
