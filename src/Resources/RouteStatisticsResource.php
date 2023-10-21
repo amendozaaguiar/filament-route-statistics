@@ -17,6 +17,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Stringable;
 
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
@@ -26,13 +27,34 @@ class RouteStatisticsResource extends Resource
 {
     protected static ?string $model = RouteStatistic::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chart-bar-square';
+    public static function getSlug(): string
+    {
+        if (filled(config('filament-route-statistics.resource.slug'))) {
+            return config('filament-route-statistics.resource.slug');
+        }
+
+        return str(static::class)
+            ->whenContains(
+                '\\Resources\\',
+                fn (Stringable $slug): Stringable => $slug->afterLast('\\Resources\\'),
+                fn (Stringable $slug): Stringable => $slug->classBasename(),
+            )
+            ->beforeLast('Resource')
+            ->plural()
+            ->explode('\\')
+            ->map(fn (string $string) => str($string)->kebab()->slug())
+            ->implode('/');
+    }
+
+    public static function getNavigationIcon(): ?string
+    {
+        return config('filament-route-statistics.resource.navigation_icon');
+    }
 
     public static function getBreadcrumb(): string
     {
         return '';
     }
-
 
     public static function getLabel(): string
     {
@@ -62,15 +84,15 @@ class RouteStatisticsResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id')
-                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.id'))
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.id'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('user.' . config('filament-route-statistics.username.column'))
-                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.user.name'))
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.user.name'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('method')
-                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.method'))
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.method'))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'GET' => 'success',
@@ -83,11 +105,11 @@ class RouteStatisticsResource extends Resource
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('route')
-                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.route'))
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.route'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('status')
-                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.status'))
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.status'))
                     ->badge()
                     ->color(fn (string $state): string => match (substr($state, 0, 1)) {
                         '1' => 'gray',
@@ -100,41 +122,41 @@ class RouteStatisticsResource extends Resource
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('ip')
-                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.ip'))
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.ip'))
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('date')
-                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.date'))
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.date'))
                     ->dateTime()
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('counter')
-                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.counter'))
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.counter'))
                     ->numeric()
                     ->searchable()
                     ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('user_id')
-                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.user'))
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.user'))
                     ->multiple()
                     ->options(fn () => User::select('id', config('filament-route-statistics.username.column'))->pluck(config('filament-route-statistics.username.column'), 'id')->toArray())
                     ->attribute('user_id'),
 
                 SelectFilter::make('method')
-                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.method'))
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.method'))
                     ->multiple()
                     ->options(fn () => RouteStatistic::select('method')->distinct()->pluck('method', 'method')->toArray())
                     ->attribute('method'),
 
                 SelectFilter::make('status')
-                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.status'))
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.status'))
                     ->multiple()
                     ->options(fn () => RouteStatistic::select('status')->distinct()->pluck('status', 'status')->toArray())
                     ->attribute('status'),
 
                 SelectFilter::make('status')
-                    ->label(trans('filament-route-statistics::filament-route-statistics.table.columns.route'))
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.route'))
                     ->multiple()
                     ->options(fn () => RouteStatistic::select('route')->distinct()->pluck('route', 'route')->toArray())
                     ->attribute('route'),
