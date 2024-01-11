@@ -11,6 +11,8 @@ return [
     ],
     'team' => [
         'classname' => 'App\Models\Team',
+        'local_key' => 'id',
+        'foreign_key' => 'team_id',
         'column' => 'name'
     ],
     'resource' => [

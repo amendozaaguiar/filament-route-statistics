@@ -92,8 +92,8 @@ class RouteStatisticsResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make(class_exists(config('filament-route-statistics.team.classname')) ? 
-                    config('filament-route-statistics.team.classname')::getTable() . '.' . config('filament-route-statistics.team.column') 
+                TextColumn::make(class_exists(config('filament-route-statistics.team.classname')) ?
+                    app(config('filament-route-statistics.team.classname'))->getTable() . '.' . config('filament-route-statistics.team.foreign_key')
                     : 'team_id')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.team'))
                     ->visible(class_exists(config('filament-route-statistics.team.classname')) ? true : false)
@@ -158,10 +158,11 @@ class RouteStatisticsResource extends Resource
                     ->attribute('user_id'),
 
                 SelectFilter::make(class_exists(config('filament-route-statistics.team.classname')) ?
-                config('filament-route-statistics.team.classname')::getTable() . '.' . config('filament-route-statistics.team.column')
-                : 'team_id')
+                    app(config('filament-route-statistics.team.classname'))->getTable() . '.' . config('filament-route-statistics.team.local_key')
+                    : 'team_id')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.team'))
                     ->multiple()
+                    ->preload(true)
                     ->options(function () {
                         if (class_exists(config('filament-route-statistics.team.classname'))) {
                             $teamClass = config('filament-route-statistics.team.classname');
@@ -171,7 +172,7 @@ class RouteStatisticsResource extends Resource
                         return [];
                     })
                     ->visible(class_exists(config('filament-route-statistics.team.classname')) ? true : false)
-                    ->attribute(class_exists(config('filament-route-statistics.team.classname')) ? config('filament-route-statistics.team.column') : 'team_id'),
+                    ->attribute(class_exists(config('filament-route-statistics.team.classname')) ? config('filament-route-statistics.team.local_key') : 'team_id'),
 
                 SelectFilter::make('method')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.method'))
