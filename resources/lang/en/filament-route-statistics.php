@@ -47,6 +47,16 @@ return [
     'table.columns.ip' => 'IP',
     'table.columns.date' => 'Date',
     'table.columns.counter' => 'Counter',
+    
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Table Filters
+    |--------------------------------------------------------------------------
+    */
+    
+    'table.filters.from' => 'From',
+    'table.filters.until' => 'Until',
 
 
     /*
