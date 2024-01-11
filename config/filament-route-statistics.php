@@ -10,6 +10,7 @@ return [
         'column' => 'email'
     ],
     'team' => [
+        'classname' => 'App\Models\Team',
         'column' => 'name'
     ],
     'resource' => [

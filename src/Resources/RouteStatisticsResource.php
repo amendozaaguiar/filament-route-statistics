@@ -2,27 +2,27 @@
 
 namespace Amendozaaguiar\FilamentRouteStatistics\Resources;
 
-use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pages\CreateRouteStatistics;
-use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pages\EditRouteStatistics;
-use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pages\ListRouteStatistics;
-use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Widgets\RouteStatisticsOverview;
-use Bilfeldt\LaravelRouteStatistics\Models\RouteStatistic;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Foundation\Auth\User;
-use Illuminate\Support\Stringable;
 use App\Models\Team;
-
-use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Illuminate\Support\Stringable;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Foundation\Auth\User;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use Bilfeldt\LaravelRouteStatistics\Models\RouteStatistic;
+use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pages\EditRouteStatistics;
+
+use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pages\ListRouteStatistics;
+use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pages\CreateRouteStatistics;
+use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Widgets\RouteStatisticsOverview;
 
 class RouteStatisticsResource extends Resource
 {
@@ -94,9 +94,11 @@ class RouteStatisticsResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make(class_exists('App\Models\Team') ? 'team.' . config('filament-route-statistics.team.column') : 'team_id')
+                TextColumn::make(class_exists(config('filament-route-statistics.team.classname')) ? 
+                    config('filament-route-statistics.team.classname')::getTable() . '.' . config('filament-route-statistics.team.column') 
+                    : 'team_id')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.team'))
-                    ->visible(class_exists('App\Models\Team') ? true : false)
+                    ->visible(class_exists(config('filament-route-statistics.team.classname')) ? true : false)
                     ->searchable()
                     ->sortable(),
 
@@ -157,18 +159,21 @@ class RouteStatisticsResource extends Resource
                     ->options(fn () => User::select('id', config('filament-route-statistics.username.column'))->pluck(config('filament-route-statistics.username.column'), 'id')->toArray())
                     ->attribute('user_id'),
 
-                SelectFilter::make('team_id')
+                SelectFilter::make(class_exists(config('filament-route-statistics.team.classname')) ?
+                config('filament-route-statistics.team.classname')::getTable() . '.' . config('filament-route-statistics.team.column')
+                : 'team_id')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.team'))
                     ->multiple()
                     ->options(function () {
-                        if (class_exists('App\Models\Team')) {
-                            return Team::select('id', config('filament-route-statistics.team.column'))->pluck(config('filament-route-statistics.team.column'), 'id')->toArray();
+                        if (class_exists(config('filament-route-statistics.team.classname'))) {
+                            $teamClass = config('filament-route-statistics.team.classname');
+                            return $teamClass::select('id', config('filament-route-statistics.team.column'))->pluck(config('filament-route-statistics.team.column'), 'id')->toArray();
                         }
 
                         return [];
                     })
-                    ->visible(class_exists('App\Models\Team') ? true : false)
-                    ->attribute('team_id'),
+                    ->visible(class_exists(config('filament-route-statistics.team.classname')) ? true : false)
+                    ->attribute(class_exists(config('filament-route-statistics.team.classname')) ? config('filament-route-statistics.team.column') : 'team_id'),
 
                 SelectFilter::make('method')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.method'))
