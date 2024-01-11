@@ -140,7 +140,7 @@ class RouteStatisticsResource extends Resource
 
                 TextColumn::make('date')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.date'))
-                    ->dateTime()
+                    ->date()
                     ->searchable()
                     ->sortable(),
 
@@ -194,8 +194,8 @@ class RouteStatisticsResource extends Resource
 
                 Filter::make('date')
                     ->form([
-                        DatePicker::make('created_from')->label('Desde'),
-                        DatePicker::make('created_until')->label('Hasta'),
+                        DatePicker::make('created_from')->label(__('filament-route-statistics::filament-route-statistics.table.filters.from')),
+                        DatePicker::make('created_until')->label(__('filament-route-statistics::filament-route-statistics.table.filters.until')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
