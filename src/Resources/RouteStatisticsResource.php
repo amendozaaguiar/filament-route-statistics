@@ -2,7 +2,6 @@
 
 namespace Amendozaaguiar\FilamentRouteStatistics\Resources;
 
-use App\Models\Team;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
