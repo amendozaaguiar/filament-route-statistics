@@ -24,7 +24,17 @@ use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Wid
 
 class RouteStatisticsResource extends Resource
 {
-    protected static ?string $model = RouteStatistic::class;
+    protected static ?string $model = null;
+
+    public static function setModel()
+    {
+        return config('filament-route-statistics.resource.model') ?? config('route-statistics.model');
+    }
+
+    public static function getModel(): string
+    {
+        return static::$model ?? (string) !empty(config('filament-route-statistics.resource.model')) ? str(config('filament-route-statistics.resource.model')) : str(config('route-statistics.model'));
+    }
 
     public static function getSlug(): string
     {
@@ -177,19 +187,22 @@ class RouteStatisticsResource extends Resource
                 SelectFilter::make('method')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.method'))
                     ->multiple()
-                    ->options(fn () => RouteStatistic::select('method')->distinct()->pluck('method', 'method')->toArray())
+                    ->options(fn () => class_exists(config('filament-route-statistics.resource.model')) ?
+                        app(config('filament-route-statistics.resource.model'))::select('method')->distinct()->pluck('method', 'method')->toArray() : [])
                     ->attribute('method'),
 
                 SelectFilter::make('status')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.status'))
                     ->multiple()
-                    ->options(fn () => RouteStatistic::select('status')->distinct()->pluck('status', 'status')->toArray())
+                    ->options(fn () => class_exists(config('filament-route-statistics.resource.model')) ?
+                        app(config('filament-route-statistics.resource.model'))::select('status')->distinct()->pluck('status', 'status')->toArray() : [])
                     ->attribute('status'),
 
                 SelectFilter::make('status')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.route'))
                     ->multiple()
-                    ->options(fn () => RouteStatistic::select('route')->distinct()->pluck('route', 'route')->toArray())
+                    ->options(fn () => class_exists(config('filament-route-statistics.resource.model')) ?
+                        app(config('filament-route-statistics.resource.model'))::select('route')->distinct()->pluck('route', 'route')->toArray() : [])
                     ->attribute('route'),
 
                 Filter::make('date')

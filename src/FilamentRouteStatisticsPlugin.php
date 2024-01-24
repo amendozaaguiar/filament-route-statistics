@@ -17,9 +17,7 @@ class FilamentRouteStatisticsPlugin implements Plugin
     public function register(Panel $panel): void
     {
         $panel
-            ->resources([
-                RouteStatisticsResource::class,
-            ]);
+            ->resources(config('filament-route-statistics.resource.classes'));
     }
 
     public function getId(): string

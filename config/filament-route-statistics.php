@@ -1,7 +1,7 @@
 <?php
 
 return [
-
+    
     'sort' => [
         'column' => 'id',
         'direction' => 'desc',
@@ -17,6 +17,10 @@ return [
     ],
     'resource' => [
         'slug' => null,
+        'classes' => [
+            \Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource::class,
+        ],
+        'model' => \Bilfeldt\LaravelRouteStatistics\Models\RouteStatistic::class,
         'navigation_icon' => 'heroicon-o-chart-bar-square'
     ]
 ];
