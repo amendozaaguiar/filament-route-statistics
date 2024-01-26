@@ -50,11 +50,13 @@ return [
     |--------------------------------------------------------------------------
     | 
     |  This option controls the default slug for the resource and navigation icon.
-    | 
+    |  and the date format to use in the resource.
+    |
     */
 
     'resource' => [
         'slug' => null,
-        'navigation_icon' => 'heroicon-o-chart-bar-square'
+        'navigation_icon' => 'heroicon-o-chart-bar-square',
+        'date_format' => 'M j, Y H:i:s',
     ]
 ];

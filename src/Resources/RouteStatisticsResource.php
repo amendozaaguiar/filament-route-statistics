@@ -140,7 +140,7 @@ class RouteStatisticsResource extends Resource
 
                 TextColumn::make('date')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.date'))
-                    ->dateTime()
+                    ->dateTime(config('filament-route-statistics.resource.date_format'))
                     ->searchable()
                     ->sortable(),
 
