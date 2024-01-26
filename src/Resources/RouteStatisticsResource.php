@@ -190,8 +190,8 @@ class RouteStatisticsResource extends Resource
 
                 Filter::make('date')
                     ->form([
-                        DatePicker::make('created_from')->label('Desde'),
-                        DatePicker::make('created_until')->label('Hasta'),
+                        DatePicker::make('created_from'),
+                        DatePicker::make('created_until'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
