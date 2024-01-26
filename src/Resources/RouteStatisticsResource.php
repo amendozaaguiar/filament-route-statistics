@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Stringable;
-use App\Models\Team;
+
 
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
@@ -94,9 +94,9 @@ class RouteStatisticsResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make(class_exists('App\Models\Team') ? 'team.' . config('filament-route-statistics.team.column') : 'team_id')
+                TextColumn::make(config('filament-route-statistics.team.model') ? 'team.' . config('filament-route-statistics.team.column') : 'team_id')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.team'))
-                    ->visible(class_exists('App\Models\Team') ? true : false)
+                    ->visible(config('filament-route-statistics.team.model') ? true : false)
                     ->searchable()
                     ->sortable(),
 
@@ -161,13 +161,13 @@ class RouteStatisticsResource extends Resource
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.team'))
                     ->multiple()
                     ->options(function () {
-                        if (class_exists('App\Models\Team')) {
-                            return Team::select('id', config('filament-route-statistics.team.column'))->pluck(config('filament-route-statistics.team.column'), 'id')->toArray();
+                        if (config('filament-route-statistics.team.model')) {
+                            return config('filament-route-statistics.team.model')::select('id', config('filament-route-statistics.team.column'))->pluck(config('filament-route-statistics.team.column'), 'id')->toArray();
                         }
 
                         return [];
                     })
-                    ->visible(class_exists('App\Models\Team') ? true : false)
+                    ->visible(config('filament-route-statistics.team.model') ? true : false)
                     ->attribute('team_id'),
 
                 SelectFilter::make('method')
