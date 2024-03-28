@@ -2,8 +2,6 @@
 
 namespace Amendozaaguiar\FilamentRouteStatistics\Resources;
 
-use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pages\CreateRouteStatistics;
-use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pages\EditRouteStatistics;
 use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pages\ListRouteStatistics;
 use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Widgets\RouteStatisticsOverview;
 use Bilfeldt\LaravelRouteStatistics\Models\RouteStatistic;
@@ -19,65 +17,58 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Stringable;
 
-
-use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
-use pxlrbt\FilamentExcel\Exports\ExcelExport;
-
 class RouteStatisticsResource extends Resource
 {
     protected static ?string $model = RouteStatistic::class;
 
-    public static function getSlug(): string
-    {
-        if (filled(config('filament-route-statistics.resource.slug'))) {
-            return config('filament-route-statistics.resource.slug');
-        }
+    protected static ?string $navigationIcon = 'heroicon-o-chart-bar-square';
 
-        return str(static::class)
-            ->whenContains(
-                '\\Resources\\',
-                fn (Stringable $slug): Stringable => $slug->afterLast('\\Resources\\'),
-                fn (Stringable $slug): Stringable => $slug->classBasename(),
-            )
-            ->beforeLast('Resource')
-            ->plural()
-            ->explode('\\')
-            ->map(fn (string $string) => str($string)->kebab()->slug())
-            ->implode('/');
+    protected static ?string $navigationGroup = 'Estadísticas';
+
+    protected static ?string $modelLabel = 'Estadística de ruta';
+
+    protected static ?string $pluralModelLabel = 'Estadísticas de rutas';
+
+    protected static string $userName = 'email';
+
+    protected static ?string $teamModel = null;
+
+    protected static ?string $teamColumn = 'team_id';
+
+    protected static string $dateFormat = 'M j, Y H:i:s';
+
+    protected static string $sortColumn = 'id';
+
+    protected static string $sortDirection = 'desc';
+
+    public static function getUserName(): string
+    {
+        return static::$userName;
     }
 
-    public static function getNavigationIcon(): ?string
+    public static function getTeamModel(): ?string
     {
-        return config('filament-route-statistics.resource.navigation_icon');
+        return static::$teamModel;
     }
 
-    public static function getBreadcrumb(): string
+    public static function getTeamColumn(): ?string
     {
-        return '';
+        return static::$teamColumn;
     }
 
-    public static function getLabel(): string
+    public static function getDateFormat(): string
     {
-        return __('filament-route-statistics::filament-route-statistics.navigation.label');
+        return static::$dateFormat;
     }
 
-    public static function getPluralLabel(): string
+    public static function getSortColumn(): string
     {
-        return __('filament-route-statistics::filament-route-statistics.navigation.pluralLabel');
+        return static::$sortColumn;
     }
 
-    public static function getNavigationGroup(): ?string
+    public static function getSortDirection(): string
     {
-        return __('filament-route-statistics::filament-route-statistics.navigation.group');
-    }
-
-    public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                //
-            ]);
+        return static::$sortDirection;
     }
 
     public static function table(Table $table): Table
@@ -85,20 +76,14 @@ class RouteStatisticsResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id')
-                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.id'))
-                    ->searchable()
-                    ->sortable(),
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.id')),
 
-                TextColumn::make('user.' . config('filament-route-statistics.username.column'))
-                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.user.name'))
-                    ->searchable()
-                    ->sortable(),
+                TextColumn::make('user.' . static::getUserName())
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.user.name')),
 
-                TextColumn::make(config('filament-route-statistics.team.model') ? 'team.' . config('filament-route-statistics.team.column') : 'team_id')
+                TextColumn::make(static::getTeamModel() ? 'team.' . static::getTeamColumn() : static::getTeamColumn())
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.team'))
-                    ->visible(config('filament-route-statistics.team.model') ? true : false)
-                    ->searchable()
-                    ->sortable(),
+                    ->visible(static::getTeamModel() ? true : false),
 
                 TextColumn::make('method')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.method'))
@@ -110,14 +95,10 @@ class RouteStatisticsResource extends Resource
                         'PATCH' => 'gray',
                         'DELETE' => 'danger',
                         default => 'gray'
-                    })
-                    ->searchable()
-                    ->sortable(),
+                    }),
 
                 TextColumn::make('route')
-                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.route'))
-                    ->searchable()
-                    ->sortable(),
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.route')),
 
                 TextColumn::make('status')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.status'))
@@ -129,116 +110,81 @@ class RouteStatisticsResource extends Resource
                         '4' => 'warning',
                         '5' => 'danger',
                         default => 'gray'
-                    })
-                    ->searchable()
-                    ->sortable(),
+                    }),
 
                 TextColumn::make('ip')
-                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.ip'))
-                    ->searchable()
-                    ->sortable(),
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.ip')),
 
                 TextColumn::make('date')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.date'))
-                    ->dateTime(config('filament-route-statistics.resource.date_format'))
-                    ->searchable()
-                    ->sortable(),
+                    ->dateTime(static::getDateFormat()),
 
                 TextColumn::make('counter')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.counter'))
-                    ->numeric()
-                    ->searchable()
-                    ->sortable(),
+                    ->numeric(),
             ])
             ->filters([
-                SelectFilter::make('user_id')
-                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.user'))
-                    ->multiple()
-                    ->options(fn () => User::select('id', config('filament-route-statistics.username.column'))->pluck(config('filament-route-statistics.username.column'), 'id')->toArray())
-                    ->attribute('user_id'),
+                // SelectFilter::make('user_id')
+                //     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.user'))
+                //     ->multiple()
+                //     ->options(fn () => User::select('id', config('filament-route-statistics.username.column'))->pluck(config('filament-route-statistics.username.column'), 'id')->toArray())
+                //     ->attribute('user_id'),
 
-                SelectFilter::make('team_id')
-                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.team'))
-                    ->multiple()
-                    ->options(function () {
-                        if (config('filament-route-statistics.team.model')) {
-                            return config('filament-route-statistics.team.model')::select('id', config('filament-route-statistics.team.column'))->pluck(config('filament-route-statistics.team.column'), 'id')->toArray();
-                        }
+                // SelectFilter::make('team_id')
+                //     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.team'))
+                //     ->multiple()
+                //     ->options(function () {
+                //         if (config('filament-route-statistics.team.model')) {
+                //             return config('filament-route-statistics.team.model')::select('id', config('filament-route-statistics.team.column'))->pluck(config('filament-route-statistics.team.column'), 'id')->toArray();
+                //         }
 
-                        return [];
-                    })
-                    ->visible(config('filament-route-statistics.team.model') ? true : false)
-                    ->attribute('team_id'),
+                //         return [];
+                //     })
+                //     ->visible(config('filament-route-statistics.team.model') ? true : false)
+                //     ->attribute('team_id'),
 
-                SelectFilter::make('method')
-                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.method'))
-                    ->multiple()
-                    ->options(fn () => RouteStatistic::select('method')->distinct()->pluck('method', 'method')->toArray())
-                    ->attribute('method'),
+                // SelectFilter::make('method')
+                //     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.method'))
+                //     ->multiple()
+                //     ->options(fn () => RouteStatistic::select('method')->distinct()->pluck('method', 'method')->toArray())
+                //     ->attribute('method'),
 
-                SelectFilter::make('status')
-                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.status'))
-                    ->multiple()
-                    ->options(fn () => RouteStatistic::select('status')->distinct()->pluck('status', 'status')->toArray())
-                    ->attribute('status'),
+                // SelectFilter::make('status')
+                //     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.status'))
+                //     ->multiple()
+                //     ->options(fn () => RouteStatistic::select('status')->distinct()->pluck('status', 'status')->toArray())
+                //     ->attribute('status'),
 
-                SelectFilter::make('status')
-                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.route'))
-                    ->multiple()
-                    ->options(fn () => RouteStatistic::select('route')->distinct()->pluck('route', 'route')->toArray())
-                    ->attribute('route'),
+                // SelectFilter::make('route')
+                //     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.route'))
+                //     ->multiple()
+                //     ->options(fn () => RouteStatistic::select('route')->distinct()->pluck('route', 'route')->toArray())
+                //     ->attribute('route'),
 
-                Filter::make('date')
-                    ->form([
-                        DatePicker::make('created_from'),
-                        DatePicker::make('created_until'),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['created_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
-                            )
-                            ->when(
-                                $data['created_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
-                            );
-                    })
+                // Filter::make('date')
+                //     ->form([
+                //         DatePicker::make('created_from'),
+                //         DatePicker::make('created_until'),
+                //     ])
+                //     ->query(function (Builder $query, array $data): Builder {
+                //         return $query
+                //             ->when(
+                //                 $data['created_from'],
+                //                 fn (Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
+                //             )
+                //             ->when(
+                //                 $data['created_until'],
+                //                 fn (Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
+                //             );
+                //     })
             ])
-            ->actions([
-                // Tables\Actions\EditAction::make(),
-            ])
-            ->headerActions([
-                ExportAction::make()->exports([
-                    ExcelExport::make()
-                        ->fromTable()
-                ])
-            ])
-            ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
-                ExportBulkAction::make()
-            ])
-            ->emptyStateActions([
-                // Tables\Actions\CreateAction::make(),
-            ])
-            ->defaultSort(config('filament-route-statistics.sort.column'), config('filament-route-statistics.sort.direction'));
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
+            ->defaultSort(static::getSortColumn(), static::getSortDirection());
     }
 
     public static function getPages(): array
     {
         return [
             'index' => ListRouteStatistics::route('/'),
-            //'create' => CreateRouteStatistics::route('/create'),
-            //'edit' => EditRouteStatistics::route('/{record}/edit'),
         ];
     }
 
@@ -247,25 +193,5 @@ class RouteStatisticsResource extends Resource
         return [
             RouteStatisticsOverview::class,
         ];
-    }
-
-    public static function canCreate(): bool
-    {
-        return false;
-    }
-
-    public static function canEdit(Model $record): bool
-    {
-        return false;
-    }
-
-    public static function canDelete(Model $record): bool
-    {
-        return false;
-    }
-
-    public static function canDeleteAny(): bool
-    {
-        return false;
     }
 }

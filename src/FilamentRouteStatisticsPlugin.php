@@ -8,6 +8,10 @@ use Filament\Panel;
 
 class FilamentRouteStatisticsPlugin implements Plugin
 {
+    public function getId(): string
+    {
+        return 'filament-route-statistics';
+    }
 
     public static function make(): static
     {
@@ -20,11 +24,6 @@ class FilamentRouteStatisticsPlugin implements Plugin
             ->resources([
                 RouteStatisticsResource::class,
             ]);
-    }
-
-    public function getId(): string
-    {
-        return 'filament-route-statistics';
     }
 
     public function boot(Panel $panel): void

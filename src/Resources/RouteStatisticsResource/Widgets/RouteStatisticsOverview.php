@@ -15,7 +15,12 @@ class RouteStatisticsOverview extends BaseWidget
 
     protected function getStats(): array
     {
-        return $this->getInformationStats();
+        return [
+            Stat::make('label', 2)
+                ->color('info'),
+        ];
+
+        // return $this->getInformationStats();
     }
 
     private function getInformationStats()

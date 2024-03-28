@@ -2,34 +2,6 @@
 
 return [
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Navigation
-    |--------------------------------------------------------------------------
-    */
-
-    'navigation.group' => 'Estadísticas',
-    'navigation.label' => 'Estadística de rutas',
-    'navigation.pluralLabel' => 'Estadísticas de rutas',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Table Header
-    |--------------------------------------------------------------------------
-    */
-
-    'table.heading' => 'Estadísticas de rutas',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Table Actions
-    |--------------------------------------------------------------------------
-    */
-
-    'table.refresh' => 'Refrescar',
-    'table.refresh.notification' => 'Estadísticas de rutas actualizadas',
-
     /*
     |--------------------------------------------------------------------------
     | Table Columns
@@ -60,6 +32,4 @@ return [
     'widgets.overview.statistic.increase' => 'Incremento',
     'widgets.overview.statistic.decrease' => 'Disminución',
     'widgets.overview.statistic.no-change' => 'Sin cambios',
-
-
 ];

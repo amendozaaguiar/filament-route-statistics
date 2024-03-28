@@ -3,23 +3,18 @@
 
 # Filament Route Statistics
 
-![Filament Authentication Log Resource](https://raw.githubusercontent.com/amendozaaguiar/filament-route-statistics/main/art/art.png)
-
-![Filament Authentication Log Resource with filters and tooltip](https://raw.githubusercontent.com/amendozaaguiar/filament-route-statistics/main/art/art-filter.png)
-
 A Filament plugin for [Laravel Route Statistics](https://github.com/bilfeldt/laravel-route-statistics) package.
 
 This package provides a Filament resource for [Laravel Route Statistics](https://github.com/bilfeldt/laravel-route-statistics).
 
 ## Requirements
 
--   PHP 8.1 | 8.2
--   [Filament 3](https://github.com/laravel-filament/filament)
+- PHP 8.1 | 8.2
+- [Filament 3](https://github.com/laravel-filament/filament)
 
 ## Dependencies
 
--   [bilfeldt/laravel-route-statistics](https://github.com/bilfeldt/laravel-route-statistics)
--   [pxlrbt/filament-excel](https://github.com/pxlrbt/filament-excel)
+- [bilfeldt/laravel-route-statistics](https://github.com/bilfeldt/laravel-route-statistics)
 
 ## Installation
 
@@ -33,12 +28,6 @@ You can publish the translations files with:
 
 ```bash
 php artisan vendor:publish --tag="filament-route-statistics-translations"
-```
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag="filament-route-statistics-config"
 ```
 
 ## Using the Resource

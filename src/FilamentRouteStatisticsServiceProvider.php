@@ -13,7 +13,6 @@ class FilamentRouteStatisticsServiceProvider extends PackageServiceProvider
     {
         $package
             ->name(static::$name)
-            ->hasConfigFile()
             ->hasTranslations();
     }
 }
