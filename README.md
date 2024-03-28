@@ -5,7 +5,7 @@
 
 A Filament plugin for [Laravel Route Statistics](https://github.com/bilfeldt/laravel-route-statistics) package.
 
-This package provides a Filament resource for [Laravel Route Statistics](https://github.com/bilfeldt/laravel-route-statistics).
+This package provides a Filament page for [Laravel Route Statistics](https://github.com/bilfeldt/laravel-route-statistics).
 
 ## Requirements
 
@@ -30,7 +30,7 @@ You can publish the translations files with:
 php artisan vendor:publish --tag="filament-route-statistics-translations"
 ```
 
-## Using the Resource
+## Using the Page
 
 Add this plugin to a panel on `plugins()` method.
 E.g. in `app/Providers/Filament/AdminPanelProvider.php`:
@@ -49,6 +49,4 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-That's it! Now you can see the log resource on left sidebar.
-
-### Resource appareance
+That's it! Now you can see the log page on left sidebar.
