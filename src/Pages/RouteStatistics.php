@@ -1,33 +1,28 @@
 <?php
 
-namespace Amendozaaguiar\FilamentRouteStatistics\Resources;
+namespace Amendozaaguiar\FilamentRouteStatistics\Pages;
 
-use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Pages\ListRouteStatistics;
-use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource\Widgets\RouteStatisticsOverview;
+use Amendozaaguiar\FilamentRouteStatistics\Widgets\RouteStatisticsOverview;
 use Bilfeldt\LaravelRouteStatistics\Models\RouteStatistic;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Foundation\Auth\User;
-use Illuminate\Support\Stringable;
 
-class RouteStatisticsResource extends Resource
+class RouteStatistics extends Page implements HasTable
 {
-    protected static ?string $model = RouteStatistic::class;
+    use InteractsWithTable;
 
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar-square';
 
-    protected static ?string $navigationGroup = 'Estadísticas';
+    protected static string $view = 'filament-route-statistics::pages.route-statistics';
 
-    protected static ?string $modelLabel = 'Estadística de ruta';
-
-    protected static ?string $pluralModelLabel = 'Estadísticas de rutas';
+    protected static ?string $navigationGroup = 'Statistics';
 
     protected static string $userName = 'email';
 
@@ -35,7 +30,7 @@ class RouteStatisticsResource extends Resource
 
     protected static ?string $teamColumn = 'team_id';
 
-    protected static string $dateFormat = 'M j, Y H:i:s';
+    protected static string $dateFormat = 'M j, Y H:i';
 
     protected static string $sortColumn = 'id';
 
@@ -71,9 +66,22 @@ class RouteStatisticsResource extends Resource
         return static::$sortDirection;
     }
 
-    public static function table(Table $table): Table
+    public static function getAggregate(): string
+    {
+        return config('route-statistics.aggregate');
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            RouteStatisticsOverview::class,
+        ];
+    }
+
+    public function table(Table $table): Table
     {
         return $table
+            ->query(RouteStatistic::query())
             ->columns([
                 TextColumn::make('id')
                     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.id')),
@@ -143,55 +151,48 @@ class RouteStatisticsResource extends Resource
                 //     ->visible(config('filament-route-statistics.team.model') ? true : false)
                 //     ->attribute('team_id'),
 
-                // SelectFilter::make('method')
-                //     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.method'))
-                //     ->multiple()
-                //     ->options(fn () => RouteStatistic::select('method')->distinct()->pluck('method', 'method')->toArray())
-                //     ->attribute('method'),
+                SelectFilter::make('method')
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.method'))
+                    ->multiple()
+                    ->options(fn () => RouteStatistic::select('method')->distinct()->pluck('method', 'method'))
+                    ->attribute('method'),
 
-                // SelectFilter::make('status')
-                //     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.status'))
-                //     ->multiple()
-                //     ->options(fn () => RouteStatistic::select('status')->distinct()->pluck('status', 'status')->toArray())
-                //     ->attribute('status'),
+                SelectFilter::make('status')
+                    ->label(__('filament-route-statistics::filament-route-statistics.table.columns.status'))
+                    ->multiple()
+                    ->options(fn () => RouteStatistic::select('status')->distinct()->pluck('status', 'status'))
+                    ->attribute('status'),
 
                 // SelectFilter::make('route')
                 //     ->label(__('filament-route-statistics::filament-route-statistics.table.columns.route'))
                 //     ->multiple()
-                //     ->options(fn () => RouteStatistic::select('route')->distinct()->pluck('route', 'route')->toArray())
+                //     ->options(fn () => RouteStatistic::select('route')->distinct()->pluck('route', 'route'))
                 //     ->attribute('route'),
 
-                // Filter::make('date')
-                //     ->form([
-                //         DatePicker::make('created_from'),
-                //         DatePicker::make('created_until'),
-                //     ])
-                //     ->query(function (Builder $query, array $data): Builder {
-                //         return $query
-                //             ->when(
-                //                 $data['created_from'],
-                //                 fn (Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
-                //             )
-                //             ->when(
-                //                 $data['created_until'],
-                //                 fn (Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
-                //             );
-                //     })
+                Filter::make('date')
+                    ->form(function () {
+                        $time = static::getAggregate();
+                        return [
+                            DateTimePicker::make('created_from')
+                                ->time($time === 'MINUTE' || $time === 'HOUR')
+                                ->seconds(false),
+                            DateTimePicker::make('created_until')
+                                ->time($time === 'MINUTE'  || $time === 'HOUR')
+                                ->seconds(false),
+                        ];
+                    })
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->where('date', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->where('date', '<=', $date),
+                            );
+                    })
             ])
             ->defaultSort(static::getSortColumn(), static::getSortDirection());
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListRouteStatistics::route('/'),
-        ];
-    }
-
-    public static function getWidgets(): array
-    {
-        return [
-            RouteStatisticsOverview::class,
-        ];
     }
 }

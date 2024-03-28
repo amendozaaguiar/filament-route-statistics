@@ -2,8 +2,10 @@
 
 namespace Amendozaaguiar\FilamentRouteStatistics;
 
+use Amendozaaguiar\FilamentRouteStatistics\Widgets\RouteStatisticsOverview;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Livewire\Livewire;
 
 class FilamentRouteStatisticsServiceProvider extends PackageServiceProvider
 {
@@ -13,6 +15,12 @@ class FilamentRouteStatisticsServiceProvider extends PackageServiceProvider
     {
         $package
             ->name(static::$name)
+            ->hasViews()
             ->hasTranslations();
+    }
+
+    public function packageBooted(): void
+    {
+        Livewire::component('route-statistics-overwiew', RouteStatisticsOverview::class);
     }
 }

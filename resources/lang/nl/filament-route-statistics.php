@@ -24,12 +24,5 @@ return [
     | Widgets
     |--------------------------------------------------------------------------
     */
-
-    'widgets.overview.label' => 'Routestatistieken',
-    'widgets.overview.description' => 'Routestatistieken',
-    'widgets.overview.statistic.all' => 'Alle',
-    'widgets.overview.statistic.description.all' => 'Verzoeken voor alle methoden van de afgelopen week',
-    'widgets.overview.statistic.increase' => 'Toename',
-    'widgets.overview.statistic.decrease' => 'Afname',
-    'widgets.overview.statistic.no-change' => 'Geen verandering',
+    'widgets.overview.statistic.description' => 'Aantal Verzoeken',
 ];

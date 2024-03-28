@@ -2,7 +2,8 @@
 
 namespace Amendozaaguiar\FilamentRouteStatistics;
 
-use Amendozaaguiar\FilamentRouteStatistics\Resources\RouteStatisticsResource;
+use Amendozaaguiar\FilamentRouteStatistics\Pages\RouteStatistics;
+use Amendozaaguiar\FilamentRouteStatistics\Widgets\RouteStatisticsOverview;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
@@ -21,8 +22,8 @@ class FilamentRouteStatisticsPlugin implements Plugin
     public function register(Panel $panel): void
     {
         $panel
-            ->resources([
-                RouteStatisticsResource::class,
+            ->pages([
+                RouteStatistics::class
             ]);
     }
 
